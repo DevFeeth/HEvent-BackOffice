@@ -1,0 +1,22 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+/* Les contrôles prennent toute la largeur du champ */
+.field > input,
+.field > select {
+  width: 100%;
+}

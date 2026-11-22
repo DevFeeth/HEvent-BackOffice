@@ -1,4 +1,4 @@
-import {ChevronLeftIcon, ChevronRightIcon} from './icons.jsx';
+import {ChevronLeftIcon, ChevronRightIcon} from '@/components/icons.jsx';
 import styles from './Pagination.module.css';
 
 export default function Pagination({page, pageCount, onChange}) {

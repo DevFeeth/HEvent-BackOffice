@@ -82,6 +82,23 @@ export function TrashIcon() {
     );
 }
 
+export function TagIcon() {
+    return (
+        <svg {...base}>
+            <path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9z"/>
+            <circle cx="8" cy="8" r="1.5"/>
+        </svg>
+    );
+}
+
+export function ShieldIcon() {
+    return (
+        <svg {...base}>
+            <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>
+        </svg>
+    );
+}
+
 export function CheckIcon() {
     return (
         <svg {...base}>

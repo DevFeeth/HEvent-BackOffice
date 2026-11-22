@@ -1,0 +1,37 @@
+/* Contenus de cellules réutilisés dans les tableaux.
+   Import : import cells from '@/styles/cells.module.css'; */
+
+/* Texte principal + texte secondaire dans une même cellule */
+.primary {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.secondary {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+/* Lien d'action "Voir ... ->" */
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.action:hover {
+  color: var(--color-primary);
+}
+
+/* Identifiant technique (ex : CONCERT) */
+.code {
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}

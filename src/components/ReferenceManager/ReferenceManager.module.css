@@ -1,0 +1,54 @@
+.error {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+/* Formulaire d'ajout, entre la recherche et le tableau */
+.addForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f5f8ff;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.labelInput {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Ligne en cours de modification */
+.editingRow,
+.editingRow:hover {
+  background: #f5f8ff;
+}
+
+.input {
+  width: 100%;
+  min-width: 140px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.rowActions {
+  display: inline-flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.rowActions > button:not(:global(.button--link)) {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+button.danger:hover:not(:disabled) {
+  color: var(--color-error);
+}
+
+.rowActions button:disabled {
+  opacity: 0.35;
+}

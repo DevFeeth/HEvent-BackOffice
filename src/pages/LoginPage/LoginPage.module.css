@@ -58,40 +58,17 @@
   color: #9aa4b2;
 }
 
-.input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
-}
-
-.options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 12px;
-}
-
 .remember {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 12px;
   color: var(--color-muted);
   cursor: pointer;
 }
 
-.link {
-  font-weight: 600;
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
 .submit {
+  justify-content: center;
   width: 100%;
   margin-top: 8px;
   padding: 12px;

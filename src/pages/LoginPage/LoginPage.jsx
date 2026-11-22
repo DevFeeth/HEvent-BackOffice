@@ -3,16 +3,16 @@ import {useNavigate} from 'react-router-dom';
 import useAuth from '@/hooks/useAuth.js';
 import {HOME_PATH} from '@/routes/paths.js';
 import {ForbiddenRoleError} from '@/utils/roles.js';
+import {getApiErrorMessage} from '@/utils/apiError.js';
 import styles from './LoginPage.module.css';
 
+// Sur la page de connexion, 400 et 401 ont un sens précis ; le reste est géré de façon commune
 function getErrorMessage(error) {
-    if (error instanceof ForbiddenRoleError) {
-        return 'Accès réservé aux administrateurs.';
-    }
+    if (error instanceof ForbiddenRoleError) return 'Accès réservé aux administrateurs.';
     switch (error.response?.status) {
-        case 401: return 'Email ou mot de passe incorrect.';
         case 400: return 'Email ou mot de passe invalide.';
-        default: return "Impossible de joindre l'API.";
+        case 401: return 'Email ou mot de passe incorrect.';
+        default: return getApiErrorMessage(error);
     }
 }
 
@@ -76,18 +76,14 @@ export default function LoginPage() {
                         />
                     </label>
 
-                    <div className={styles.options}>
-                        <label className={styles.remember}>
-                            <input
-                                type="checkbox"
-                                checked={remember}
-                                onChange={(e) => setRemember(e.target.checked)}
-                            />
-                            Se souvenir de moi
-                        </label>
-                        {/* TODO : page "mot de passe oublié" (pas encore de route dans l'API) */}
-                        <a className={styles.link} href="#">Mot de passe oublié ?</a>
-                    </div>
+                    <label className={styles.remember}>
+                        <input
+                            type="checkbox"
+                            checked={remember}
+                            onChange={(e) => setRemember(e.target.checked)}
+                        />
+                        Se souvenir de moi
+                    </label>
 
                     {error && <p className={styles.error} role="alert">{error}</p>}
 

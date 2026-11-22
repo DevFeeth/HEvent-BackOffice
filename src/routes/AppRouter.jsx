@@ -1,33 +1,46 @@
+import {lazy, Suspense} from 'react';
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {PATHS} from './paths.js';
 import ProtectedRoute from './ProtectedRoute.jsx';
 import PublicRoute from './PublicRoute.jsx';
-import AdminLayout from '@/layouts/AdminLayout.jsx';
-import LoginPage from '@/pages/LoginPage/LoginPage.jsx';
-import OrganizersPage from '@/pages/OrganizersPage/OrganizersPage.jsx';
-import EventsPage from '@/pages/EventsPage/EventsPage.jsx';
-import EventEditPage from '@/pages/EventEditPage/EventEditPage.jsx';
-import UsersPage from '@/pages/UsersPage/UsersPage.jsx';
+import Loader from '@/components/Loader/Loader.jsx';
+
+/* Lazy loading : le code de chaque page n'est téléchargé que quand on l'ouvre.
+   Le menu (AdminLayout) est aussi chargé à la demande : inutile sur la page de connexion. */
+const AdminLayout = lazy(() => import('@/layouts/AdminLayout.jsx'));
+const LoginPage = lazy(() => import('@/pages/LoginPage/LoginPage.jsx'));
+const OrganizersPage = lazy(() => import('@/pages/OrganizersPage/OrganizersPage.jsx'));
+const OrganizerCreatePage = lazy(() => import('@/pages/OrganizerCreatePage/OrganizerCreatePage.jsx'));
+const EventsPage = lazy(() => import('@/pages/EventsPage/EventsPage.jsx'));
+const EventEditPage = lazy(() => import('@/pages/EventEditPage/EventEditPage.jsx'));
+const UsersPage = lazy(() => import('@/pages/UsersPage/UsersPage.jsx'));
+const CategoriesPage = lazy(() => import('@/pages/CategoriesPage/CategoriesPage.jsx'));
+const RolesPage = lazy(() => import('@/pages/RolesPage/RolesPage.jsx'));
 
 export default function AppRouter() {
     return (
-        <Routes>
-            {/* Pages publiques */}
-            <Route element={<PublicRoute/>}>
-                <Route path={PATHS.LOGIN} element={<LoginPage/>}/>
-            </Route>
-
-            {/* Pages protégées, toutes avec le menu latéral de l'AdminLayout */}
-            <Route element={<ProtectedRoute/>}>
-                <Route element={<AdminLayout/>}>
-                    <Route path={PATHS.ORGANIZERS} element={<OrganizersPage/>}/>
-                    <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
-                    <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>
-                    <Route path={PATHS.USERS} element={<UsersPage/>}/>
+        <Suspense fallback={<Loader/>}>
+            <Routes>
+                {/* Pages publiques */}
+                <Route element={<PublicRoute/>}>
+                    <Route path={PATHS.LOGIN} element={<LoginPage/>}/>
                 </Route>
-            </Route>
 
-            <Route path="*" element={<Navigate to={PATHS.LOGIN} replace/>}/>
-        </Routes>
+                {/* Pages protégées, toutes avec le menu latéral de l'AdminLayout */}
+                <Route element={<ProtectedRoute/>}>
+                    <Route element={<AdminLayout/>}>
+                        <Route path={PATHS.ORGANIZERS} element={<OrganizersPage/>}/>
+                        <Route path={PATHS.ORGANIZER_NEW} element={<OrganizerCreatePage/>}/>
+                        <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
+                        <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>
+                        <Route path={PATHS.USERS} element={<UsersPage/>}/>
+                        <Route path={PATHS.CATEGORIES} element={<CategoriesPage/>}/>
+                        <Route path={PATHS.ROLES} element={<RolesPage/>}/>
+                    </Route>
+                </Route>
+
+                <Route path="*" element={<Navigate to={PATHS.LOGIN} replace/>}/>
+            </Routes>
+        </Suspense>
     );
 }

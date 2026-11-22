@@ -2,9 +2,12 @@
 export const PATHS = {
     LOGIN: '/',
     ORGANIZERS: '/organisateurs',
+    ORGANIZER_NEW: '/organisateurs/nouveau',
     EVENTS: '/evenements',
     EVENT_EDIT: '/evenements/:id/modifier',
     USERS: '/utilisateurs',
+    CATEGORIES: '/categories',
+    ROLES: '/roles',
 };
 
 // Page d'arrivée après connexion

@@ -1,0 +1,20 @@
+.error {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+.retry {
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+button.retry:hover:not(:disabled) {
+  background: var(--color-bg);
+}
