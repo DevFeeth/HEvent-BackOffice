@@ -1,0 +1,136 @@
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* ---------- Menu latéral ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 24px 16px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.brand {
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navTitle {
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--color-text);
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+}
+
+.navLink:hover {
+  background: var(--color-bg);
+}
+
+.active {
+  font-weight: 600;
+  border-color: var(--color-border);
+  background: var(--color-bg);
+}
+
+.navLabel {
+  flex: 1;
+}
+
+.navCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.account {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.accountName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.accountRole {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.logout {
+  margin-top: 8px;
+  padding: 0;
+  font-size: 12px;
+  color: var(--color-muted);
+  background: none;
+  text-decoration: underline;
+}
+
+.logout:hover:not(:disabled) {
+  color: var(--color-text);
+  background: none;
+}
+
+/* ---------- Contenu ---------- */
+.content {
+  min-width: 0;
+  padding: 32px;
+}
+
+/* ---------- Mobile : menu au-dessus du contenu ---------- */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .account {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .logout {
+    margin-top: 0;
+  }
+
+  .content {
+    padding: 24px 16px;
+  }
+}

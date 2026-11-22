@@ -1,0 +1,253 @@
+/* ---------- En-tête ---------- */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--color-text);
+}
+
+.title {
+  margin: 0 0 24px;
+  font-size: 24px;
+}
+
+/* ---------- Sections (cartes) ---------- */
+.section {
+  margin-bottom: 16px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sectionHeader .sectionTitle {
+  margin: 0;
+}
+
+/* ---------- Champs ---------- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+.input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+.input:focus,
+.suffixInput:focus-within {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
+}
+
+/* Input avec une unité à droite ("places", "€") */
+.suffixInput {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.suffixInput input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.suffixInput span {
+  padding-right: 10px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.readOnly {
+  background: var(--color-bg);
+}
+
+/* ---------- Grilles ---------- */
+.generalGrid {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 16px;
+}
+
+.datesGrid {
+  display: grid;
+  grid-template-columns: 1fr 130px 1px 1fr 130px;
+  gap: 16px;
+  align-items: end;
+}
+
+.separator {
+  align-self: stretch;
+  background: var(--color-border);
+}
+
+/* ---------- Types de tickets ---------- */
+.ticketsSection {
+  padding-bottom: 12px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin: 0 -20px;
+}
+
+.ticketsTable {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.ticketsTable th {
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--color-muted);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ticketsTable td {
+  padding: 8px 20px;
+}
+
+.colPrice {
+  width: 160px;
+}
+
+.colQuantity {
+  width: 120px;
+}
+
+.ticketsTable th.colAction,
+.ticketsTable td.colAction {
+  width: 120px;
+  text-align: center;
+}
+
+.empty {
+  padding: 24px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: var(--color-text);
+  background: none;
+}
+
+.removeButton:hover:not(:disabled) {
+  color: var(--color-error);
+  background: none;
+}
+
+.note {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--color-muted);
+}
+
+/* ---------- Boutons ---------- */
+.secondaryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  color: var(--color-text);
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background: var(--color-bg);
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.error {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 768px) {
+  .generalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .datesGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .separator {
+    display: none;
+  }
+}

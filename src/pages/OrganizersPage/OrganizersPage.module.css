@@ -1,0 +1,19 @@
+/* Le style du tableau est dans src/styles/table.module.css */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.addButton {
+  font-weight: 600;
+}
