@@ -3,7 +3,6 @@ import useAuth from '@/hooks/useAuth.js';
 import Loader from '@/components/Loader/Loader.jsx';
 import {PATHS} from './paths.js';
 
-// Pages accessibles uniquement quand on est connecté
 export default function ProtectedRoute() {
     const {isAuthenticated, loading} = useAuth();
 

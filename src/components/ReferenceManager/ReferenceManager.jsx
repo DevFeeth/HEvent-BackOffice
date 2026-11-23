@@ -1,6 +1,7 @@
 import {useCallback, useMemo, useState} from 'react';
 import useFetch from '@/hooks/useFetch.js';
 import useListControls from '@/hooks/useListControls.js';
+import useConfirm from '@/hooks/useConfirm.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
 import DataList from '@/components/DataList/DataList.jsx';
@@ -34,6 +35,7 @@ export default function ReferenceManager({
     title, addLabel, itemWord, usageHeader,
     fetchItems, onCreate, onUpdate, onDelete, getLockReason, onChanged,
 }) {
+    const confirm = useConfirm();
     const {data, loading, error, reload} = useFetch(fetchItems);
     const items = data ?? NO_ITEMS;
     const controls = useListControls(items, referenceMatches);
@@ -83,10 +85,14 @@ export default function ReferenceManager({
     }, [editing, run, onUpdate]);
 
     const handleDelete = useCallback(async (item) => {
-        if (window.confirm(`Supprimer « ${item.label} » (${item.name}) ?`)) {
+        const confirmed = await confirm({
+            title: `Supprimer « ${item.label} » ?`,
+            message: <>L&apos;élément <code>{item.name}</code> sera définitivement supprimé. Cette action est irréversible.</>,
+        });
+        if (confirmed) {
             await run(() => onDelete(item.name));
         }
-    }, [run, onDelete]);
+    }, [confirm, run, onDelete]);
 
     const columns = useMemo(() => {
         const isEditing = (item) => editing?.name === item.name;

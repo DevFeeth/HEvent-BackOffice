@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {organizerEventsPath} from '@/routes/paths.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
+import useConfirm from '@/hooks/useConfirm.js';
 import {CheckIcon} from '@/components/icons.jsx';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
 import FormField from '@/components/FormField/FormField.jsx';
@@ -19,6 +20,7 @@ import styles from './EventEditPage.module.css';
  */
 export default function EventEditForm({event, ticketTypes, saveError, onSaveError}) {
     const navigate = useNavigate();
+    const confirm = useConfirm();
     const backPath = organizerEventsPath(event.organizer_id);
 
     // Valeurs initiales calculées une seule fois (le parent remonte le formulaire après un rechargement)
@@ -33,7 +35,22 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
     const updateRow = (key, field, value) =>
         setRows((current) => current.map((row) => (row.key === key ? {...row, [field]: value} : row)));
     const addRow = () => setRows((current) => [...current, toTicketRow()]);
-    const removeRow = (key) => setRows((current) => current.filter((row) => row.key !== key));
+    // Confirmation seulement si la ligne contient quelque chose (une ligne vide se retire directement)
+    async function removeRow(key) {
+        const row = rows.find((r) => r.key === key);
+        const isFilled = row.id || row.name.trim() || row.price.trim() || row.available_quantity.trim();
+        if (isFilled) {
+            const confirmed = await confirm({
+                title: 'Retirer ce type de ticket ?',
+                message: row.id
+                    ? <>« <strong>{row.name || 'Sans nom'}</strong> » sera supprimé lors de l&apos;enregistrement de l&apos;événement.</>
+                    : <>« <strong>{row.name || 'Sans nom'}</strong> » sera retiré du formulaire.</>,
+                confirmLabel: 'Retirer',
+            });
+            if (!confirmed) return;
+        }
+        setRows((current) => current.filter((r) => r.key !== key));
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();

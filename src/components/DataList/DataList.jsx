@@ -10,11 +10,12 @@ import styles from './DataList.module.css';
  * Props :
  *  - controls : résultat du hook useListControls (recherche, page, lignes visibles...)
  *  - itemWord : mot au singulier pour les compteurs ("organisateur")
+ *  - filters  : contenu optionnel affiché à côté de la recherche (ex : filtre par rôle)
  *  - children : contenu optionnel affiché entre la barre de recherche et le tableau (ex : formulaire d'ajout)
  *  - les autres props (columns, getRowKey, loading, error, onRetry, emptyMessage, getRowClassName)
  *    sont transmises à DataTable
  */
-export default function DataList({controls, itemWord, children, ...tableProps}) {
+export default function DataList({controls, itemWord, filters, children, ...tableProps}) {
     const {search, setSearch, filtered, visible, start, page, pageCount, setPage} = controls;
     const total = filtered.length;
 
@@ -25,7 +26,10 @@ export default function DataList({controls, itemWord, children, ...tableProps}) 
     return (
         <section className={styles.card}>
             <div className={styles.toolbar}>
-                <SearchInput value={search} onChange={setSearch}/>
+                <div className={styles.toolbarStart}>
+                    <SearchInput value={search} onChange={setSearch}/>
+                    {filters}
+                </div>
                 <span className={styles.total}>{plural(total, itemWord)}</span>
             </div>
 

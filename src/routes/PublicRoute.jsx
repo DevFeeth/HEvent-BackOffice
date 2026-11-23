@@ -3,7 +3,6 @@ import useAuth from '@/hooks/useAuth.js';
 import Loader from '@/components/Loader/Loader.jsx';
 import {HOME_PATH} from './paths.js';
 
-// Pages accessibles uniquement quand on est déconnecté (ex : login)
 export default function PublicRoute() {
     const {isAuthenticated, loading} = useAuth();
 

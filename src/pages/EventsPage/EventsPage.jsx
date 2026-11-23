@@ -4,7 +4,8 @@ import useFetch from '@/hooks/useFetch.js';
 import useListControls from '@/hooks/useListControls.js';
 import {getEvents} from '@/api/events.js';
 import {getUsers} from '@/api/users.js';
-import {eventEditPath, PATHS} from '@/routes/paths.js';
+import {eventEditPath, usersPath} from '@/routes/paths.js';
+import {ROLES} from '@/utils/roles.js';
 import {formatDateInput, toDateInput} from '@/utils/format.js';
 import {EVENT_STATUS_LABELS} from '@/utils/eventStatus.js';
 import {fullName} from '@/utils/users.js';
@@ -82,7 +83,7 @@ export default function EventsPage() {
     );
 
     const title = data?.organizer ? `Événements de ${fullName(data.organizer)}` : 'Événements';
-    const back = organizerId ? {to: PATHS.ORGANIZERS, label: 'Retour aux organisateurs'} : undefined;
+    const back = organizerId ? {to: usersPath(ROLES.ORGANIZER), label: 'Retour aux utilisateurs'} : undefined;
 
     return (
         <>

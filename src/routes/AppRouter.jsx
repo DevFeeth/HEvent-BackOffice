@@ -5,11 +5,8 @@ import ProtectedRoute from './ProtectedRoute.jsx';
 import PublicRoute from './PublicRoute.jsx';
 import Loader from '@/components/Loader/Loader.jsx';
 
-/* Lazy loading : le code de chaque page n'est téléchargé que quand on l'ouvre.
-   Le menu (AdminLayout) est aussi chargé à la demande : inutile sur la page de connexion. */
 const AdminLayout = lazy(() => import('@/layouts/AdminLayout.jsx'));
 const LoginPage = lazy(() => import('@/pages/LoginPage/LoginPage.jsx'));
-const OrganizersPage = lazy(() => import('@/pages/OrganizersPage/OrganizersPage.jsx'));
 const OrganizerCreatePage = lazy(() => import('@/pages/OrganizerCreatePage/OrganizerCreatePage.jsx'));
 const EventsPage = lazy(() => import('@/pages/EventsPage/EventsPage.jsx'));
 const EventEditPage = lazy(() => import('@/pages/EventEditPage/EventEditPage.jsx'));
@@ -29,7 +26,6 @@ export default function AppRouter() {
                 {/* Pages protégées, toutes avec le menu latéral de l'AdminLayout */}
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<AdminLayout/>}>
-                        <Route path={PATHS.ORGANIZERS} element={<OrganizersPage/>}/>
                         <Route path={PATHS.ORGANIZER_NEW} element={<OrganizerCreatePage/>}/>
                         <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
                         <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>

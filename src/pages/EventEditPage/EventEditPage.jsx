@@ -14,7 +14,6 @@ async function fetchEventWithTickets(id) {
     return {event, ticketTypes};
 }
 
-// Charge l'événement puis affiche le formulaire de modification
 export default function EventEditPage() {
     const {id} = useParams();
     const fetcher = useCallback(() => fetchEventWithTickets(id), [id]);
@@ -23,7 +22,6 @@ export default function EventEditPage() {
 
     const handleSaveError = useCallback((message) => {
         setSaveError(message);
-        // Une partie des modifications a pu être enregistrée : on recharge pour repartir de l'état réel
         if (message) reload();
     }, [reload]);
 
@@ -38,7 +36,6 @@ export default function EventEditPage() {
 
     if (loading && !data) return <Loader/>;
 
-    // key={version} : le formulaire repart des données fraîches après chaque rechargement
     return (
         <EventEditForm
             key={version}

@@ -7,17 +7,15 @@ import {getEvents} from '@/api/events.js';
 import {getCategories} from '@/api/categories.js';
 import {getRoles} from '@/api/roles.js';
 import {PATHS} from '@/routes/paths.js';
-import {ROLE_LABELS, ROLES} from '@/utils/roles.js';
+import {ROLE_LABELS} from '@/utils/roles.js';
 import {CalendarIcon, ShieldIcon, TagIcon, UsersIcon} from '@/components/icons.jsx';
 import styles from './AdminLayout.module.css';
 
-// Compteurs affichés dans le menu
 async function fetchCounts() {
     const [users, events, categories, roles] = await Promise.all([
         getUsers(), getEvents(), getCategories(), getRoles(),
     ]);
     return {
-        organizers: users.filter(({role_name: role}) => role === ROLES.ORGANIZER).length,
         events: events.length,
         users: users.length,
         categories: categories.length,
@@ -29,9 +27,8 @@ const NAV_SECTIONS = [
     {
         title: 'Gestion',
         items: [
-            {to: PATHS.ORGANIZERS, label: 'Organisateurs', icon: UsersIcon, countKey: 'organizers'},
-            {to: PATHS.EVENTS, label: 'Événements', icon: CalendarIcon, countKey: 'events'},
             {to: PATHS.USERS, label: 'Utilisateurs', icon: UsersIcon, countKey: 'users'},
+            {to: PATHS.EVENTS, label: 'Événements', icon: CalendarIcon, countKey: 'events'},
         ],
     },
     {

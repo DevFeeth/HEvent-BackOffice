@@ -1,7 +1,5 @@
 import client from './client.js';
 
-// Rôle : {name: 'ADMIN', label: 'Administrator'} — "name" est l'identifiant (non modifiable)
-
 export const getRoles = async () => (await client.get('/roles')).data;
 
 export const addRole = async (name, label) => {

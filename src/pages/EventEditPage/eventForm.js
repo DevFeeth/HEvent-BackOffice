@@ -1,13 +1,8 @@
-/* Logique du formulaire de modification d'un événement (sans affichage) :
-   conversion API <-> formulaire, validation et enregistrement. */
 import {updateEvent} from '@/api/events.js';
 import {addTicketType, deleteTicketType, updateTicketType} from '@/api/ticketTypes.js';
 import {toDateInput, toTimeInput} from '@/utils/format.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 
-/* ---------- Conversions ---------- */
-
-// Événement de l'API -> valeurs du formulaire
 export const toEventForm = (event) => ({
     name: event.name,
     start_date: toDateInput(event.start_date),
@@ -16,8 +11,6 @@ export const toEventForm = (event) => ({
     end_time: toTimeInput(event.end_time),
 });
 
-// Type de ticket de l'API -> ligne du formulaire (valeurs en texte pour les inputs).
-// Sans argument : nouvelle ligne vide (id null = pas encore créé dans l'API).
 let nextRowKey = 0;
 export const toTicketRow = (ticketType = null) => ({
     key: nextRowKey++,
@@ -27,14 +20,12 @@ export const toTicketRow = (ticketType = null) => ({
     available_quantity: ticketType ? String(ticketType.available_quantity) : '',
 });
 
-// Ligne du formulaire -> données envoyées à l'API
 const toTicketPayload = (row) => ({
     name: row.name.trim(),
     price: Number(row.price.replace(',', '.')),
     available_quantity: Number(row.available_quantity),
 });
 
-// Ne garde que les champs qui ont changé
 const diff = (original, updated) =>
     Object.fromEntries(Object.entries(updated).filter(([key, value]) => original[key] !== value));
 
@@ -43,7 +34,6 @@ const hasChanges = (changes) => Object.keys(changes).length > 0;
 export const getCapacity = (rows) =>
     rows.reduce((total, row) => total + (Number(row.available_quantity) || 0), 0);
 
-/* ---------- Validation ---------- */
 
 const PRICE_PATTERN = /^\d+([.,]\d{1,2})?$/;
 
@@ -61,7 +51,6 @@ function validateTicketRow(row, names) {
     return null;
 }
 
-/** Renvoie un message d'erreur, ou null si le formulaire est valide. */
 export function validateEventForm(form, rows) {
     if (!form.name.trim()) return 'Le nom de l\'événement est obligatoire.';
     if (!form.start_date || !form.start_time || !form.end_date || !form.end_time) {
@@ -80,9 +69,6 @@ export function validateEventForm(form, rows) {
     return null;
 }
 
-/* ---------- Enregistrement ---------- */
-
-// Erreur qui indique quelle étape de l'enregistrement a échoué
 export class SaveStepError extends Error {
     constructor(step, cause) {
         super(`${step} : ${getApiErrorMessage(cause)}`, {cause});
@@ -98,11 +84,6 @@ async function runStep(step, action) {
     }
 }
 
-/**
- * Envoie à l'API uniquement ce qui a changé, dans cet ordre :
- * événement -> types de tickets retirés -> modifiés -> ajoutés.
- * (Les suppressions passent avant pour libérer les noms, uniques par événement.)
- */
 export async function saveEventChanges({event, ticketTypes, initialForm, form, rows}) {
     const eventChanges = diff(initialForm, {...form, name: form.name.trim()});
     if (hasChanges(eventChanges)) {
