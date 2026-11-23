@@ -22,7 +22,6 @@ const EMPTY_FORM = {
 const OPTIONAL_FIELDS = ['address', 'postal_code', 'city'];
 const MIN_PASSWORD_LENGTH = 8;
 
-// Champs vides optionnels retirés (l'API refuse une chaîne vide pour certains champs)
 function toPayload(form) {
     const payload = Object.fromEntries(
         Object.entries(form).map(([key, value]) => [key, key === 'password' ? value : value.trim()])
@@ -60,7 +59,6 @@ export default function OrganizerCreatePage() {
         setSaving(true);
         let userId = null;
         try {
-            // 1. Création du compte (rôle USER par défaut), 2. passage au rôle ORGANIZER
             userId = await createUser(toPayload(form));
             await updateUser(userId, {role_name: ROLES.ORGANIZER});
             refreshCounts();

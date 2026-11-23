@@ -1,13 +1,6 @@
 import {TrashIcon} from '@/components/icons.jsx';
 import styles from './EventEditPage.module.css';
 
-/**
- * Tableau éditable des types de tickets.
- *
- * Props :
- *  - rows : lignes du formulaire [{key, id, name, price, available_quantity}]
- *  - onChange(key, field, value), onAdd(), onRemove(key)
- */
 export default function TicketTypesEditor({rows, onChange, onAdd, onRemove}) {
     return (
         <section className={`${styles.section} ${styles.ticketsSection}`}>

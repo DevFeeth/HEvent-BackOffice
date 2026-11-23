@@ -1,7 +1,3 @@
-/* Interprétation des erreurs renvoyées par l'API.
-   - erreur réseau / 5xx : le problème vient du serveur -> l'utilisateur peut réessayer plus tard
-   - 4xx                 : le problème vient de la requête -> on explique quoi corriger */
-
 export const ERROR_KIND = {
     NETWORK: 'network',
     SERVER: 'server',
@@ -14,10 +10,8 @@ export function getErrorKind(error) {
     return status >= 500 ? ERROR_KIND.SERVER : ERROR_KIND.CLIENT;
 }
 
-// Réessayer n'a de sens que si le problème ne vient pas de la requête
 export const isRetryableError = (error) => getErrorKind(error) !== ERROR_KIND.CLIENT;
 
-// Traductions des messages renvoyés par l'API
 const KNOWN_MESSAGES = {
     'The dates of an event cannot be in the past': 'Les dates d\'un événement ne peuvent pas être dans le passé.',
     'The quantity cannot be lower than the number of tickets already sold':
@@ -45,14 +39,12 @@ function getClientErrorMessage(response, fallback) {
     if (typeof body === 'string' && body) {
         return KNOWN_MESSAGES[body] ?? body;
     }
-    // Erreurs de validation (vine) : [{message, field}, ...]
     if (Array.isArray(body) && body.length > 0) {
         return body.map(({message}) => message).join(' ');
     }
     return STATUS_MESSAGES[response.status] ?? fallback;
 }
 
-/** Transforme une erreur axios en message lisible pour l'utilisateur. */
 export function getApiErrorMessage(error, fallback = 'Une erreur est survenue.') {
     switch (getErrorKind(error)) {
         case ERROR_KIND.NETWORK:

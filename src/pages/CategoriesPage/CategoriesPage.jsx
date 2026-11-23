@@ -4,7 +4,6 @@ import {addCategory, deleteCategory, getCategories, updateCategory} from '@/api/
 import {getEvents} from '@/api/events.js';
 import {plural} from '@/utils/format.js';
 
-// Catégories + nombre d'événements qui les utilisent
 async function fetchCategories() {
     const [categories, events] = await Promise.all([getCategories(), getEvents()]);
     return categories.map((category) => ({
@@ -13,7 +12,6 @@ async function fetchCategories() {
     }));
 }
 
-// Une catégorie utilisée par des événements ne peut pas être supprimée
 const getLockReason = (category) =>
     category.usage > 0 ? `Utilisée par ${plural(category.usage, 'événement')}` : null;
 

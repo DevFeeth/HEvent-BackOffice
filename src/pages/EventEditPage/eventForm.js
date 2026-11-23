@@ -34,7 +34,6 @@ const hasChanges = (changes) => Object.keys(changes).length > 0;
 export const getCapacity = (rows) =>
     rows.reduce((total, row) => total + (Number(row.available_quantity) || 0), 0);
 
-
 const PRICE_PATTERN = /^\d+([.,]\d{1,2})?$/;
 
 function validateTicketRow(row, names) {

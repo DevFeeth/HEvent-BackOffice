@@ -6,7 +6,6 @@ import {ForbiddenRoleError} from '@/utils/roles.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 import styles from './LoginPage.module.css';
 
-// Sur la page de connexion, 400 et 401 ont un sens précis ; le reste est géré de façon commune
 function getErrorMessage(error) {
     if (error instanceof ForbiddenRoleError) return 'Accès réservé aux administrateurs.';
     switch (error.response?.status) {

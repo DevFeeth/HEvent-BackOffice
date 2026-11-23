@@ -2,11 +2,6 @@ import {Link} from 'react-router-dom';
 import {ArrowLeftIcon} from '@/components/icons.jsx';
 import styles from './PageHeader.module.css';
 
-/**
- * En-tête commun des pages : lien retour (optionnel), titre, actions à droite (optionnel).
- *
- * Props : title, back ({to, label}), children (boutons d'action)
- */
 export default function PageHeader({title, back, children}) {
     return (
         <>

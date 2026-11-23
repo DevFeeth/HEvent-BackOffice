@@ -4,7 +4,6 @@
   color: var(--color-error);
 }
 
-/* Formulaire d'ajout, entre la recherche et le tableau */
 .addForm {
   display: flex;
   flex-wrap: wrap;
@@ -20,7 +19,6 @@
   min-width: 160px;
 }
 
-/* Ligne en cours de modification */
 .editingRow,
 .editingRow:hover {
   background: #f5f8ff;

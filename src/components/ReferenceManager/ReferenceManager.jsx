@@ -21,16 +21,6 @@ function validateNewItem({name, label}, items) {
     return null;
 }
 
-/**
- * Gestion d'une liste {name, label} : catégories, rôles...
- *
- * Props :
- *  - title, addLabel, itemWord, usageHeader : textes de la page
- *  - fetchItems : async () => [{name, label, usage}] — fonction stable (définie hors composant)
- *  - onCreate(name, label), onUpdate(name, label), onDelete(name) : appels API
- *  - getLockReason(item) : texte si l'élément ne peut pas être supprimé, sinon null
- *  - onChanged() : appelé après chaque modification réussie (ex : recharger les compteurs du menu)
- */
 export default function ReferenceManager({
     title, addLabel, itemWord, usageHeader,
     fetchItems, onCreate, onUpdate, onDelete, getLockReason, onChanged,
@@ -40,12 +30,11 @@ export default function ReferenceManager({
     const items = data ?? NO_ITEMS;
     const controls = useListControls(items, referenceMatches);
 
-    const [newItem, setNewItem] = useState(null); // null = formulaire d'ajout fermé
-    const [editing, setEditing] = useState(null); // {name, label} en cours de modification
+    const [newItem, setNewItem] = useState(null);
+    const [editing, setEditing] = useState(null);
     const [busy, setBusy] = useState(false);
     const [message, setMessage] = useState('');
 
-    // Lance un appel API puis recharge la liste ; renvoie true si tout s'est bien passé
     const run = useCallback(async (action) => {
         setBusy(true);
         setMessage('');

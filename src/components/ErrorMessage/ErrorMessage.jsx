@@ -1,12 +1,6 @@
 import {getApiErrorMessage, isRetryableError} from '@/utils/apiError.js';
 import styles from './ErrorMessage.module.css';
 
-/**
- * Affiche une erreur d'API.
- * Le bouton "Réessayer" n'apparaît que pour les erreurs serveur / réseau (pas pour une 4xx).
- *
- * Props : error (erreur axios), fallback (message par défaut), onRetry (optionnel)
- */
 export default function ErrorMessage({error, fallback, onRetry}) {
     if (!error) return null;
 

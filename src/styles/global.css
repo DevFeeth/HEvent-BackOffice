@@ -1,20 +1,15 @@
-/* Styles globaux : s'appliquent à toute l'application.
-   Les styles propres à une page vont dans son fichier .module.css */
-
-/* ---------- Variables (à modifier ici pour changer tout le site) ---------- */
 :root {
   --color-text: #1f2328;
   --color-muted: #59636e;
   --color-border: #d1d9e0;
-  --color-bg: #f4f6f8;         /* fond de la page (body) */
-  --color-surface: #ffffff;    /* fond des cartes, formulaires, en-tête */
+  --color-bg: #f4f6f8;
+  --color-surface: #ffffff;
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
   --color-error: #c62828;
   --radius: 8px;
 }
 
-/* ---------- Base ---------- */
 *,
 *::before,
 *::after {
@@ -38,11 +33,6 @@ code {
     monospace;
 }
 
-/* ---------- Boutons ----------
-   <button> est un bouton principal par défaut.
-   .button            : donne l'apparence d'un bouton à un lien (<Link className="button">)
-   .button--secondary : bouton blanc avec bordure
-   .button--link      : bouton qui ressemble à un lien texte */
 button,
 .button {
   display: inline-flex;
@@ -95,7 +85,6 @@ button.button--link:hover:not(:disabled) {
   background: none;
 }
 
-/* ---------- Champs ---------- */
 input,
 select {
   padding: 8px 10px;

@@ -42,12 +42,10 @@ const NAV_SECTIONS = [
 
 const navLinkClass = ({isActive}) => `${styles.navLink} ${isActive ? styles.active : ''}`;
 
-// Structure commune à toutes les pages connectées : menu latéral + contenu
 export default function AdminLayout() {
     const {user, logout} = useAuth();
     const {data: counts, reload: refreshCounts} = useFetch(fetchCounts);
 
-    // Partagé avec les pages via <Outlet context> (lu avec le hook useAdminLayout)
     const outletContext = useMemo(() => ({refreshCounts}), [refreshCounts]);
 
     return (

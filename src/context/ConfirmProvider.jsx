@@ -2,12 +2,8 @@ import {useCallback, useRef, useState} from 'react';
 import {ConfirmContext} from '@/context/confirmContext.js';
 import ConfirmDialog from '@/components/ConfirmDialog/ConfirmDialog.jsx';
 
-/**
- * Fournit useConfirm() à toute l'application et affiche la popup de confirmation.
- * Une seule popup à la fois : un nouvel appel annule la précédente.
- */
 export default function ConfirmProvider({children}) {
-    const [options, setOptions] = useState(null); // null = popup fermée
+    const [options, setOptions] = useState(null);
     const resolveRef = useRef(null);
 
     const confirm = useCallback((opts) => {

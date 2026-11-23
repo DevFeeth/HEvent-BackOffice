@@ -1,10 +1,5 @@
 import styles from './FormField.module.css';
 
-/**
- * Champ de formulaire : libellé + contrôle (input, select...) + aide optionnelle.
- *
- * Props : label, hint (texte d'aide), children (le contrôle)
- */
 export default function FormField({label, hint, children}) {
     return (
         <label className={styles.field}>

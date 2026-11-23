@@ -1,8 +1,5 @@
 const TOKEN_KEY = 'hevent_token';
 
-// "Se souvenir de moi" coché   -> localStorage   (reste après fermeture du navigateur)
-// "Se souvenir de moi" décoché -> sessionStorage (effacé à la fermeture de l'onglet)
-
 export const getToken = () =>
     localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
 

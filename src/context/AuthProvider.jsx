@@ -6,13 +6,10 @@ import {AUTH_EXPIRED_EVENT} from '@/api/client.js';
 import {clearToken, getToken, setToken} from '@/utils/tokenStorage.js';
 import {canAccessBackOffice, ForbiddenRoleError} from '@/utils/roles.js';
 
-// Garde l'utilisateur connecté en mémoire et le partage à toute l'application
 export default function AuthProvider({children}) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(Boolean(getToken()));
 
-    // Au démarrage : si un token existe, on récupère l'utilisateur
-    // (et on l'ignore s'il n'a pas le droit d'accéder au BackOffice)
     useEffect(() => {
         if (!getToken()) return;
         getMe()
@@ -27,7 +24,6 @@ export default function AuthProvider({children}) {
             .finally(() => setLoading(false));
     }, []);
 
-    // Token expiré détecté par le client API -> on déconnecte
     useEffect(() => {
         const onExpired = () => setUser(null);
         window.addEventListener(AUTH_EXPIRED_EVENT, onExpired);
@@ -44,7 +40,6 @@ export default function AuthProvider({children}) {
             }
             setUser(me);
         } catch (error) {
-            // Rôle refusé ou erreur : on ne garde pas le token
             clearToken();
             throw error;
         }

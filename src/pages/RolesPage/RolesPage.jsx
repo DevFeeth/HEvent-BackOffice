@@ -5,10 +5,8 @@ import {getUsers} from '@/api/users.js';
 import {ROLES} from '@/utils/roles.js';
 import {plural} from '@/utils/format.js';
 
-// Rôles de base : l'API refuse de les supprimer
 const BASE_ROLES = new Set(Object.values(ROLES));
 
-// Rôles + nombre d'utilisateurs qui les ont
 async function fetchRoles() {
     const [roles, users] = await Promise.all([getRoles(), getUsers()]);
     return roles.map((role) => ({

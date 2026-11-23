@@ -1,5 +1,5 @@
 import {useCallback, useMemo, useState} from 'react';
-import {Link, useSearchParams} from 'react-router-dom';
+import {Link, useLocation, useSearchParams} from 'react-router-dom';
 import useFetch from '@/hooks/useFetch.js';
 import useListControls from '@/hooks/useListControls.js';
 import useAuth from '@/hooks/useAuth.js';
@@ -7,12 +7,10 @@ import useAdminLayout from '@/hooks/useAdminLayout.js';
 import useConfirm from '@/hooks/useConfirm.js';
 import {deleteUser, getUsers, updateUser} from '@/api/users.js';
 import {getRoles} from '@/api/roles.js';
-import {getEvents} from '@/api/events.js';
-import {organizerEventsPath, PATHS} from '@/routes/paths.js';
+import {PATHS, userEditPath} from '@/routes/paths.js';
 import {formatDate} from '@/utils/format.js';
 import {fullName, userMatches} from '@/utils/users.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
-import {ArrowRightIcon} from '@/components/icons.jsx';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
 import DataList from '@/components/DataList/DataList.jsx';
 import cells from '@/styles/cells.module.css';
@@ -20,19 +18,10 @@ import styles from './UsersPage.module.css';
 
 const NO_USERS = [];
 
-// Utilisateurs (les plus récents en premier) + nombre d'événements de chacun + rôles disponibles
 async function fetchUsersAndRoles() {
-    const [users, roles, events] = await Promise.all([getUsers(), getRoles(), getEvents()]);
-
-    const eventCountByUser = new Map();
-    for (const {organizer_id: organizerId} of events) {
-        eventCountByUser.set(organizerId, (eventCountByUser.get(organizerId) ?? 0) + 1);
-    }
-
+    const [users, roles] = await Promise.all([getUsers(), getRoles()]);
     return {
-        users: users
-            .map((user) => ({...user, eventCount: eventCountByUser.get(user.id) ?? 0}))
-            .toSorted((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+        users: users.toSorted((a, b) => new Date(b.created_at) - new Date(a.created_at)),
         roles,
     };
 }
@@ -41,9 +30,9 @@ export default function UsersPage() {
     const {user: currentUser} = useAuth();
     const {refreshCounts} = useAdminLayout();
     const confirm = useConfirm();
+    const location = useLocation();
     const {data, loading, error, reload} = useFetch(fetchUsersAndRoles);
 
-    // Filtre par rôle gardé dans l'URL (?role=ORGANIZER) : on peut y faire un lien et il survit au rechargement
     const [searchParams, setSearchParams] = useSearchParams();
     const roleFilter = searchParams.get('role') ?? '';
 
@@ -63,7 +52,6 @@ export default function UsersPage() {
         setPage(1);
     };
 
-    // Lance un appel API sur un utilisateur puis recharge la liste et les compteurs du menu
     const runOnUser = useCallback(async (user, action, fallback) => {
         setUpdatingId(user.id);
         setActionError('');
@@ -89,7 +77,7 @@ export default function UsersPage() {
             message: (
                 <>
                     Le compte <strong>{user.email}</strong> sera définitivement supprimé. Cette action est irréversible.
-                    Un compte qui a des commandes ou des tickets ne peut pas être supprimé : désactivez-le à la place.
+                    Un compte qui a des événements, des commandes ou des tickets ne peut pas être supprimé : désactivez-le à la place.
                 </>
             ),
         });
@@ -98,16 +86,10 @@ export default function UsersPage() {
         }
     }, [confirm, runOnUser]);
 
-    // Les colonnes dépendent des rôles chargés et de l'utilisateur en cours de modification
     const columns = useMemo(() => {
         const roles = data?.roles ?? [];
-        // On ne peut pas modifier son propre compte (risque de perdre l'accès admin)
         const isLocked = (user) => user.id === currentUser.id || updatingId === user.id;
-        const deleteLockReason = (user) => {
-            if (user.id === currentUser.id) return 'Vous ne pouvez pas supprimer votre propre compte';
-            if (user.eventCount > 0) return 'Cet utilisateur a des événements : désactivez son compte à la place';
-            return null;
-        };
+        const isSelf = (user) => user.id === currentUser.id;
 
         return [
             {
@@ -139,16 +121,6 @@ export default function UsersPage() {
                 ),
             },
             {
-                key: 'events',
-                header: 'Événements',
-                align: 'center',
-                render: (user) => (user.eventCount > 0 ? (
-                    <Link className={cells.action} to={organizerEventsPath(user.id)} title="Voir ses événements">
-                        {user.eventCount} <ArrowRightIcon/>
-                    </Link>
-                ) : <span className={cells.secondary}>—</span>),
-            },
-            {
                 key: 'status',
                 header: 'Statut',
                 render: (user) => (
@@ -164,6 +136,13 @@ export default function UsersPage() {
                 align: 'right',
                 render: (user) => (
                     <div className={styles.rowActions}>
+                        <Link
+                            className={styles.rowLink}
+                            to={userEditPath(user.id)}
+                            state={{back: location.pathname + location.search}}
+                        >
+                            Modifier
+                        </Link>
                         <button
                             type="button"
                             className="button--link"
@@ -176,8 +155,8 @@ export default function UsersPage() {
                             type="button"
                             className={`button--link ${styles.danger}`}
                             onClick={() => handleDelete(user)}
-                            disabled={isLocked(user) || Boolean(deleteLockReason(user))}
-                            title={deleteLockReason(user) ?? undefined}
+                            disabled={isLocked(user)}
+                            title={isSelf(user) ? 'Vous ne pouvez pas supprimer votre propre compte' : undefined}
                         >
                             Supprimer
                         </button>
@@ -185,9 +164,8 @@ export default function UsersPage() {
                 ),
             },
         ];
-    }, [data, currentUser.id, updatingId, changeUser, handleDelete]);
+    }, [data, currentUser.id, updatingId, changeUser, handleDelete, location]);
 
-    // Onglets du filtre : « Tous » + un par rôle, avec le nombre d'utilisateurs
     const roleTabs = useMemo(() => {
         const countByRole = new Map();
         for (const {role_name: role} of allUsers) {

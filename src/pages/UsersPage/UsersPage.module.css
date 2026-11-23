@@ -25,7 +25,6 @@
   color: var(--color-error);
 }
 
-/* ---------- Filtre par rôle (onglets) ---------- */
 .roleFilter {
   display: inline-flex;
   flex-wrap: wrap;
@@ -64,7 +63,6 @@ button.roleTabActive:hover:not(:disabled) {
   color: var(--color-muted);
 }
 
-/* ---------- Actions de ligne ---------- */
 .rowActions {
   display: inline-flex;
   justify-content: flex-end;
@@ -83,4 +81,15 @@ button.danger:hover:not(:disabled) {
   margin: 0 0 12px;
   font-size: 13px;
   color: var(--color-error);
+}
+
+.rowLink {
+  padding: 4px 6px;
+  font-size: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.rowLink:hover {
+  color: var(--color-primary);
 }

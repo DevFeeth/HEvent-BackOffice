@@ -4,7 +4,6 @@
   min-height: 100vh;
 }
 
-/* ---------- Menu latéral ---------- */
 .sidebar {
   position: sticky;
   top: 0;
@@ -102,13 +101,11 @@
   background: none;
 }
 
-/* ---------- Contenu ---------- */
 .content {
   min-width: 0;
   padding: 32px;
 }
 
-/* ---------- Mobile : menu au-dessus du contenu ---------- */
 @media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;

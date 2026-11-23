@@ -2,17 +2,6 @@ import {useEffect, useRef} from 'react';
 import {TrashIcon} from '@/components/icons.jsx';
 import styles from './ConfirmDialog.module.css';
 
-/**
- * Popup de confirmation (élément <dialog> natif : Échap et clic sur le fond annulent).
- * Utiliser via le hook useConfirm() plutôt que directement.
- *
- * Props :
- *  - title, message : textes affichés
- *  - confirmLabel   : texte du bouton de validation (défaut : « Supprimer »)
- *  - cancelLabel    : texte du bouton d'annulation (défaut : « Annuler »)
- *  - danger         : bouton de validation rouge (défaut : true)
- *  - onConfirm(), onCancel()
- */
 export default function ConfirmDialog({
     title = 'Confirmer la suppression',
     message,
@@ -30,7 +19,6 @@ export default function ConfirmDialog({
         return () => dialog.close();
     }, []);
 
-    // Clic sur le fond (en dehors de la boîte) = annuler
     const handleClick = (e) => {
         if (e.target === dialogRef.current) onCancel();
     };

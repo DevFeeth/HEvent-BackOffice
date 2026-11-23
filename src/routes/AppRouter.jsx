@@ -11,6 +11,7 @@ const OrganizerCreatePage = lazy(() => import('@/pages/OrganizerCreatePage/Organ
 const EventsPage = lazy(() => import('@/pages/EventsPage/EventsPage.jsx'));
 const EventEditPage = lazy(() => import('@/pages/EventEditPage/EventEditPage.jsx'));
 const UsersPage = lazy(() => import('@/pages/UsersPage/UsersPage.jsx'));
+const UserEditPage = lazy(() => import('@/pages/UserEditPage/UserEditPage.jsx'));
 const CategoriesPage = lazy(() => import('@/pages/CategoriesPage/CategoriesPage.jsx'));
 const RolesPage = lazy(() => import('@/pages/RolesPage/RolesPage.jsx'));
 
@@ -18,18 +19,17 @@ export default function AppRouter() {
     return (
         <Suspense fallback={<Loader/>}>
             <Routes>
-                {/* Pages publiques */}
                 <Route element={<PublicRoute/>}>
                     <Route path={PATHS.LOGIN} element={<LoginPage/>}/>
                 </Route>
 
-                {/* Pages protégées, toutes avec le menu latéral de l'AdminLayout */}
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<AdminLayout/>}>
                         <Route path={PATHS.ORGANIZER_NEW} element={<OrganizerCreatePage/>}/>
                         <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
                         <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>
                         <Route path={PATHS.USERS} element={<UsersPage/>}/>
+                        <Route path={PATHS.USER_EDIT} element={<UserEditPage/>}/>
                         <Route path={PATHS.CATEGORIES} element={<CategoriesPage/>}/>
                         <Route path={PATHS.ROLES} element={<RolesPage/>}/>
                     </Route>

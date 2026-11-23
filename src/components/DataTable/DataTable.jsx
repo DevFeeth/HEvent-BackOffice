@@ -6,16 +6,6 @@ const ALIGN_CLASS = {
     right: styles.right,
 };
 
-/**
- * Tableau générique.
- *
- * Props :
- *  - columns : [{key, header, align?: 'center'|'right', width?, render?: (row) => JSX}]
- *              sans render, la cellule affiche row[key]
- *  - rows, getRowKey(row)
- *  - loading, error, onRetry, emptyMessage : états affichés à la place des lignes
- *  - getRowClassName(row) : classe CSS optionnelle par ligne
- */
 export default function DataTable({
     columns, rows, getRowKey, loading = false, error = null, onRetry,
     emptyMessage = 'Aucun élément.', getRowClassName,

@@ -15,7 +15,6 @@
   color: var(--color-muted);
 }
 
-/* Les contrôles prennent toute la largeur du champ */
 .field > input,
 .field > select {
   width: 100%;

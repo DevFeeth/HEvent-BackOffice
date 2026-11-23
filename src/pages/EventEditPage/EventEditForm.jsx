@@ -10,20 +10,11 @@ import TicketTypesEditor from './TicketTypesEditor.jsx';
 import {getCapacity, saveEventChanges, SaveStepError, toEventForm, toTicketRow, validateEventForm} from './eventForm.js';
 import styles from './EventEditPage.module.css';
 
-/**
- * Formulaire de modification d'un événement et de ses types de tickets.
- *
- * Props :
- *  - event, ticketTypes : données chargées depuis l'API
- *  - saveError          : erreur d'enregistrement à afficher (gardée par le parent)
- *  - onSaveError(msg)   : signale une erreur d'enregistrement au parent ('' pour l'effacer)
- */
 export default function EventEditForm({event, ticketTypes, saveError, onSaveError}) {
     const navigate = useNavigate();
     const confirm = useConfirm();
     const backPath = organizerEventsPath(event.organizer_id);
 
-    // Valeurs initiales calculées une seule fois (le parent remonte le formulaire après un rechargement)
     const [initialForm] = useState(() => toEventForm(event));
     const [form, setForm] = useState(initialForm);
     const [rows, setRows] = useState(() => ticketTypes.map(toTicketRow));
@@ -35,7 +26,6 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
     const updateRow = (key, field, value) =>
         setRows((current) => current.map((row) => (row.key === key ? {...row, [field]: value} : row)));
     const addRow = () => setRows((current) => [...current, toTicketRow()]);
-    // Confirmation seulement si la ligne contient quelque chose (une ligne vide se retire directement)
     async function removeRow(key) {
         const row = rows.find((r) => r.key === key);
         const isFilled = row.id || row.name.trim() || row.price.trim() || row.available_quantity.trim();

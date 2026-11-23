@@ -1,4 +1,3 @@
-// Petites icônes SVG (traits, couleur = couleur du texte)
 const base = {
     width: 16,
     height: 16,
