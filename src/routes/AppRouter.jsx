@@ -7,7 +7,7 @@ import Loader from '@/components/Loader/Loader.jsx';
 
 const AdminLayout = lazy(() => import('@/layouts/AdminLayout.jsx'));
 const LoginPage = lazy(() => import('@/pages/LoginPage/LoginPage.jsx'));
-const OrganizerCreatePage = lazy(() => import('@/pages/OrganizerCreatePage/OrganizerCreatePage.jsx'));
+const UserCreatePage = lazy(() => import('@/pages/UserCreatePage/UserCreatePage.jsx'));
 const EventsPage = lazy(() => import('@/pages/EventsPage/EventsPage.jsx'));
 const EventEditPage = lazy(() => import('@/pages/EventEditPage/EventEditPage.jsx'));
 const UsersPage = lazy(() => import('@/pages/UsersPage/UsersPage.jsx'));
@@ -25,7 +25,7 @@ export default function AppRouter() {
 
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<AdminLayout/>}>
-                        <Route path={PATHS.ORGANIZER_NEW} element={<OrganizerCreatePage/>}/>
+                        <Route path={PATHS.USER_NEW} element={<UserCreatePage/>}/>
                         <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
                         <Route path={PATHS.EVENT_NEW} element={<EventEditPage key="new"/>}/>
                         <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>

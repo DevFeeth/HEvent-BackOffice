@@ -7,7 +7,7 @@ import useAdminLayout from '@/hooks/useAdminLayout.js';
 import useConfirm from '@/hooks/useConfirm.js';
 import {deleteUser, getUsers, updateUser} from '@/api/users.js';
 import {getRoles} from '@/api/roles.js';
-import {PATHS, userEditPath} from '@/routes/paths.js';
+import {userEditPath, userNewPath} from '@/routes/paths.js';
 import {formatDate} from '@/utils/format.js';
 import {fullName} from '@/utils/users.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
@@ -187,7 +187,7 @@ export default function UsersPage() {
     return (
         <>
             <PageHeader title="Utilisateurs">
-                <Link className="button" to={PATHS.ORGANIZER_NEW}>+ Ajouter un organisateur</Link>
+                <Link className="button" to={userNewPath(roleFilter)}>+ Ajouter un utilisateur</Link>
             </PageHeader>
 
             {actionError && <p className={styles.error} role="alert">{actionError}</p>}
