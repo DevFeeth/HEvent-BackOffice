@@ -1,6 +1,5 @@
 import {useCallback, useMemo, useState} from 'react';
-import useFetch from '@/hooks/useFetch.js';
-import useListControls from '@/hooks/useListControls.js';
+import usePagedList from '@/hooks/usePagedList.js';
 import useConfirm from '@/hooks/useConfirm.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
@@ -10,25 +9,22 @@ import styles from './ReferenceManager.module.css';
 
 const NAME_PATTERN = /^[A-Z0-9_-]+$/;
 const EMPTY_ITEM = {name: '', label: ''};
-const NO_ITEMS = [];
 
-const referenceMatches = (item, query) => `${item.name} ${item.label}`.toLowerCase().includes(query);
-
-function validateNewItem({name, label}, items) {
+// Un code déjà utilisé est refusé par l'API (409) : seule la page courante est connue ici
+function validateNewItem({name, label}) {
     if (!NAME_PATTERN.test(name)) return 'Le code ne peut contenir que des lettres, chiffres, « _ » et « - ».';
     if (!label) return 'Le libellé est obligatoire.';
-    if (items.some((item) => item.name === name)) return `Le code « ${name} » existe déjà.`;
     return null;
 }
 
+// fetchPage({search, page, limit}) → {items, total} ; usageKey : champ qui compte les éléments liés
 export default function ReferenceManager({
-    title, addLabel, itemWord, usageHeader,
-    fetchItems, onCreate, onUpdate, onDelete, getLockReason, onChanged,
+    title, addLabel, itemWord, usageHeader, usageKey,
+    fetchPage, onCreate, onUpdate, onDelete, getLockReason, onChanged,
 }) {
     const confirm = useConfirm();
-    const {data, loading, error, reload} = useFetch(fetchItems);
-    const items = data ?? NO_ITEMS;
-    const controls = useListControls(items, referenceMatches);
+    const list = usePagedList(fetchPage);
+    const {reload} = list;
 
     const [newItem, setNewItem] = useState(null);
     const [editing, setEditing] = useState(null);
@@ -54,7 +50,7 @@ export default function ReferenceManager({
     async function handleCreate(e) {
         e.preventDefault();
         const item = {name: newItem.name.trim(), label: newItem.label.trim()};
-        const validationError = validateNewItem(item, items);
+        const validationError = validateNewItem(item);
         setMessage(validationError ?? '');
         if (!validationError && await run(() => onCreate(item.name, item.label))) {
             setNewItem(null);
@@ -103,7 +99,7 @@ export default function ReferenceManager({
                     />
                 ) : item.label),
             },
-            {key: 'usage', header: usageHeader, align: 'center'},
+            {key: usageKey, header: usageHeader, align: 'center'},
             {
                 key: 'actions',
                 header: 'Actions',
@@ -138,7 +134,7 @@ export default function ReferenceManager({
                 )),
             },
         ];
-    }, [editing, busy, usageHeader, getLockReason, handleUpdate, handleDelete]);
+    }, [editing, busy, usageHeader, usageKey, getLockReason, handleUpdate, handleDelete]);
 
     return (
         <>
@@ -151,14 +147,11 @@ export default function ReferenceManager({
             {message && <p className={styles.error} role="alert">{message}</p>}
 
             <DataList
-                controls={controls}
+                list={list}
                 itemWord={itemWord}
                 columns={columns}
                 getRowKey={(item) => item.name}
                 getRowClassName={(item) => (editing?.name === item.name ? styles.editingRow : undefined)}
-                loading={loading}
-                error={error}
-                onRetry={reload}
             >
                 {newItem && (
                     <form className={styles.addForm} onSubmit={handleCreate}>

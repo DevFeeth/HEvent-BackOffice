@@ -48,4 +48,10 @@ client.interceptors.response.use(
     }
 );
 
+// Liste paginée : le corps contient la page demandée, le header X-Total-Count le nombre total d'éléments
+export async function getList(url, params) {
+    const {data, headers} = await client.get(url, {params});
+    return {items: data, total: Number(headers['x-total-count'] ?? data.length)};
+}
+
 export default client;

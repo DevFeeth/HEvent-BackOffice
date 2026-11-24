@@ -23,11 +23,10 @@ L'URL de l'API se configure via `VITE_API_URL` (voir `.env.example`).
 | Vue | Contenu |
 |---|---|
 | Connexion | Email + mot de passe, « se souvenir de moi », accès réservé au rôle `ADMIN` |
-| Organisateurs | Liste (recherche + pagination), nombre d'événements, ajout d'un organisateur |
+| Utilisateurs | Liste (recherche + pagination), filtre par rôle avec compteurs, changement de rôle, activation / désactivation, suppression, modification complète, ajout d'un organisateur |
 | Événements | Liste (recherche + pagination), filtre par organisateur, modification d'un événement et de ses types de tickets |
-| Utilisateurs | Liste (recherche + pagination), changement de rôle, activation / désactivation |
-| Catégories | Liste (recherche + pagination), ajout, modification du libellé, suppression |
-| Rôles | Liste (recherche + pagination), ajout, modification du libellé, suppression |
+| Catégories | Liste (recherche + pagination) avec le nombre d'événements, ajout, modification du libellé, suppression |
+| Rôles | Liste (recherche + pagination) avec le nombre d'utilisateurs, ajout, modification du libellé, suppression |
 
 ## Structure
 
@@ -39,7 +38,7 @@ src/
 ├── layouts/            menu latéral commun aux pages connectées
 ├── pages/              une page = un dossier (composant + CSS module)
 ├── components/         composants réutilisables (DataList, DataTable, SearchInput, Pagination, ...)
-├── hooks/              hooks custom (useFetch, useListControls, useAuth, useAdminLayout)
+├── hooks/              hooks custom (useFetch, usePagedList, useDebouncedValue, useAuth, useConfirm, useAdminLayout)
 ├── context/            contexte d'authentification
 ├── api/                appels à l'API, un fichier par ressource ; client.js gère token + exponential retry
 ├── utils/              fonctions utilitaires (erreurs API, formats, rôles, token)
@@ -47,6 +46,10 @@ src/
 ```
 
 ### Choix techniques
+
+- **Recherche et pagination côté serveur** (`src/hooks/usePagedList.js`) : chaque liste envoie
+  `?search=&page=&limit=` à l'API, qui applique la limite en SQL (`LIMIT`/`OFFSET`) et renvoie le total dans le
+  header `X-Total-Count`. La recherche attend 300 ms après la dernière frappe (`useDebouncedValue`) avant d'appeler l'API.
 
 - **Exponential retry** (`src/api/client.js`) : les requêtes GET qui échouent pour une erreur réseau, 5xx ou 429
   sont relancées 3 fois avec un délai doublé à chaque essai (500 ms, 1 s, 2 s).

@@ -1,6 +1,7 @@
-import client from './client.js';
+import client, {getList} from './client.js';
 
-export const getCategories = async () => (await client.get('/categories')).data;
+// params : search, page, limit → {items, total} ; chaque catégorie a son event_count
+export const getCategories = (params) => getList('/categories', params);
 
 export const addCategory = async (name, label) => {
     await client.post('/categories', {name, label});

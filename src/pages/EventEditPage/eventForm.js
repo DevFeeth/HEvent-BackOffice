@@ -55,7 +55,7 @@ export function validateEventForm(form, rows) {
     if (!form.start_date || !form.start_time || !form.end_date || !form.end_time) {
         return 'Les dates et heures de début et de fin sont obligatoires.';
     }
-    if (`${form.end_date}T${form.end_time}` < `${form.start_date}T${form.start_time}`) {
+    if (`${form.end_date}T${form.end_time}` <= `${form.start_date}T${form.start_time}`) {
         return 'La fin de l\'événement doit être après son début.';
     }
 

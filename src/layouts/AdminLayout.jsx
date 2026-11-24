@@ -11,16 +11,14 @@ import {ROLE_LABELS} from '@/utils/roles.js';
 import {CalendarIcon, ShieldIcon, TagIcon, UsersIcon} from '@/components/icons.jsx';
 import styles from './AdminLayout.module.css';
 
+// Seul le total compte : on demande une page d'un élément et on lit X-Total-Count
+const countOf = async (getList) => (await getList({limit: 1})).total;
+
 async function fetchCounts() {
     const [users, events, categories, roles] = await Promise.all([
-        getUsers(), getEvents(), getCategories(), getRoles(),
+        countOf(getUsers), countOf(getEvents), countOf(getCategories), countOf(getRoles),
     ]);
-    return {
-        events: events.length,
-        users: users.length,
-        categories: categories.length,
-        roles: roles.length,
-    };
+    return {users, events, categories, roles};
 }
 
 const NAV_SECTIONS = [

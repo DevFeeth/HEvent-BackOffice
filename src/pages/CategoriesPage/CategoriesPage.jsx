@@ -1,19 +1,10 @@
 import ReferenceManager from '@/components/ReferenceManager/ReferenceManager.jsx';
 import useAdminLayout from '@/hooks/useAdminLayout.js';
 import {addCategory, deleteCategory, getCategories, updateCategory} from '@/api/categories.js';
-import {getEvents} from '@/api/events.js';
 import {plural} from '@/utils/format.js';
 
-async function fetchCategories() {
-    const [categories, events] = await Promise.all([getCategories(), getEvents()]);
-    return categories.map((category) => ({
-        ...category,
-        usage: events.filter((event) => event.category_name === category.name).length,
-    }));
-}
-
 const getLockReason = (category) =>
-    category.usage > 0 ? `Utilisée par ${plural(category.usage, 'événement')}` : null;
+    category.event_count > 0 ? `Utilisée par ${plural(category.event_count, 'événement')}` : null;
 
 export default function CategoriesPage() {
     const {refreshCounts} = useAdminLayout();
@@ -24,7 +15,8 @@ export default function CategoriesPage() {
             addLabel="+ Ajouter une catégorie"
             itemWord="catégorie"
             usageHeader="Événements"
-            fetchItems={fetchCategories}
+            usageKey="event_count"
+            fetchPage={getCategories}
             onCreate={addCategory}
             onUpdate={updateCategory}
             onDelete={deleteCategory}

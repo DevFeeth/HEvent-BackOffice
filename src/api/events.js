@@ -1,6 +1,7 @@
-import client from './client.js';
+import client, {getList} from './client.js';
 
-export const getEvents = async (params = {}) => (await client.get('/events', {params})).data;
+// params : search, page, limit, organizer_id → {items, total}
+export const getEvents = (params) => getList('/events', params);
 
 export const getEvent = async (id) => (await client.get(`/events/${id}`)).data;
 

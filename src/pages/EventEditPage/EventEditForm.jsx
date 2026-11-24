@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {organizerEventsPath} from '@/routes/paths.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 import useConfirm from '@/hooks/useConfirm.js';
@@ -13,7 +13,8 @@ import styles from './EventEditPage.module.css';
 export default function EventEditForm({event, ticketTypes, saveError, onSaveError}) {
     const navigate = useNavigate();
     const confirm = useConfirm();
-    const backPath = organizerEventsPath(event.organizer_id);
+    // Retour à la liste d'où l'on vient ; sans historique, aux événements de l'organisateur
+    const backPath = useLocation().state?.back ?? organizerEventsPath(event.organizer_id);
 
     const [initialForm] = useState(() => toEventForm(event));
     const [form, setForm] = useState(initialForm);
@@ -65,7 +66,7 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
         <form onSubmit={handleSubmit} noValidate>
             <PageHeader
                 title="Modifier l'événement"
-                back={{to: backPath, label: 'Retour aux événements de l\'organisateur'}}
+                back={{to: backPath, label: 'Retour aux événements'}}
             />
 
             <section className={styles.section}>

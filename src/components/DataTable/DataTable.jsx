@@ -20,7 +20,7 @@ export default function DataTable({
     }
 
     return (
-        <div className={styles.wrapper}>
+        <div className={`${styles.wrapper} ${loading && !status ? styles.loading : ''}`} aria-busy={loading}>
             <table className={styles.table}>
                 <thead>
                     <tr>

@@ -1,5 +1,11 @@
 .wrapper {
   overflow-x: auto;
+  transition: opacity 0.15s;
+}
+
+/* Rechargement (changement de page, recherche) : l'ancienne page reste affichée en grisé */
+.loading {
+  opacity: 0.55;
 }
 
 .table {

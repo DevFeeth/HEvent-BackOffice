@@ -4,13 +4,13 @@ import Pagination from '@/components/Pagination/Pagination.jsx';
 import {plural} from '@/utils/format.js';
 import styles from './DataList.module.css';
 
-export default function DataList({controls, itemWord, filters, children, ...tableProps}) {
-    const {search, setSearch, filtered, visible, start, page, pageCount, setPage} = controls;
-    const total = filtered.length;
+// list : résultat de usePagedList (recherche, page courante, total, état du chargement)
+export default function DataList({list, itemWord, filters, children, ...tableProps}) {
+    const {search, setSearch, rows, total, start, page, pageCount, setPage, loading, error, reload} = list;
 
     const range = total === 0
         ? `0 ${itemWord}`
-        : `${start + 1}-${start + visible.length} sur ${plural(total, itemWord)}`;
+        : `${start + 1}-${start + rows.length} sur ${plural(total, itemWord)}`;
 
     return (
         <section className={styles.card}>
@@ -24,7 +24,7 @@ export default function DataList({controls, itemWord, filters, children, ...tabl
 
             {children}
 
-            <DataTable rows={visible} {...tableProps}/>
+            <DataTable rows={rows} loading={loading} error={error} onRetry={reload} {...tableProps}/>
 
             <div className={styles.footer}>
                 <span>{range}</span>
