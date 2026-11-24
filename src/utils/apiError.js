@@ -23,6 +23,10 @@ const KNOWN_MESSAGES = {
     'Referenced resource does not exist': 'Un élément lié n\'existe pas.',
     'Base roles cannot be deleted': 'Les rôles de base ne peuvent pas être supprimés.',
     'Resource not found': 'Élément introuvable.',
+    'Inconsistent data': 'Les données sont incohérentes (par exemple une fin avant le début).',
+    'A value is out of range': 'Une valeur dépasse la limite autorisée.',
+    'Too many failed login attempts, try again later':
+        'Trop de tentatives de connexion échouées. Réessayez dans 15 minutes.',
     'No field to update': 'Aucune modification à enregistrer.',
 };
 

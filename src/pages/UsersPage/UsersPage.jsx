@@ -1,48 +1,43 @@
 import {useCallback, useMemo, useState} from 'react';
 import {Link, useLocation, useSearchParams} from 'react-router-dom';
 import useFetch from '@/hooks/useFetch.js';
-import useListControls from '@/hooks/useListControls.js';
+import usePagedList from '@/hooks/usePagedList.js';
 import useAuth from '@/hooks/useAuth.js';
 import useAdminLayout from '@/hooks/useAdminLayout.js';
 import useConfirm from '@/hooks/useConfirm.js';
 import {deleteUser, getUsers, updateUser} from '@/api/users.js';
 import {getRoles} from '@/api/roles.js';
-import {PATHS, userEditPath} from '@/routes/paths.js';
+import {userEditPath, userNewPath} from '@/routes/paths.js';
 import {formatDate} from '@/utils/format.js';
-import {fullName, userMatches} from '@/utils/users.js';
+import {fullName} from '@/utils/users.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
 import DataList from '@/components/DataList/DataList.jsx';
 import cells from '@/styles/cells.module.css';
 import styles from './UsersPage.module.css';
 
-const NO_USERS = [];
+const NO_ROLES = [];
 
-async function fetchUsersAndRoles() {
-    const [users, roles] = await Promise.all([getUsers(), getRoles()]);
-    return {
-        users: users.toSorted((a, b) => new Date(b.created_at) - new Date(a.created_at)),
-        roles,
-    };
-}
+// Tous les rôles (peu nombreux) avec leur nombre d'utilisateurs, pour le filtre et le changement de rôle
+const fetchRoles = async () => (await getRoles()).items;
 
 export default function UsersPage() {
     const {user: currentUser} = useAuth();
     const {refreshCounts} = useAdminLayout();
     const confirm = useConfirm();
     const location = useLocation();
-    const {data, loading, error, reload} = useFetch(fetchUsersAndRoles);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const roleFilter = searchParams.get('role') ?? '';
 
-    const allUsers = data?.users ?? NO_USERS;
-    const users = useMemo(
-        () => (roleFilter ? allUsers.filter((user) => user.role_name === roleFilter) : allUsers),
-        [allUsers, roleFilter]
+    const fetchPage = useCallback(
+        (params) => getUsers({...params, role_name: roleFilter || undefined}),
+        [roleFilter]
     );
-    const controls = useListControls(users, userMatches);
-    const {setPage} = controls;
+    const list = usePagedList(fetchPage);
+    const {setPage, reload} = list;
+    const {data: rolesData, reload: reloadRoles} = useFetch(fetchRoles);
+    const roles = rolesData ?? NO_ROLES;
 
     const [updatingId, setUpdatingId] = useState(null);
     const [actionError, setActionError] = useState('');
@@ -58,13 +53,14 @@ export default function UsersPage() {
         try {
             await action();
             reload();
+            reloadRoles();
             refreshCounts();
         } catch (err) {
             setActionError(getApiErrorMessage(err, fallback));
         } finally {
             setUpdatingId(null);
         }
-    }, [reload, refreshCounts]);
+    }, [reload, reloadRoles, refreshCounts]);
 
     const changeUser = useCallback(
         (user, fields) => runOnUser(user, () => updateUser(user.id, fields), 'La modification a échoué.'),
@@ -87,7 +83,6 @@ export default function UsersPage() {
     }, [confirm, runOnUser]);
 
     const columns = useMemo(() => {
-        const roles = data?.roles ?? [];
         const isLocked = (user) => user.id === currentUser.id || updatingId === user.id;
         const isSelf = (user) => user.id === currentUser.id;
 
@@ -164,18 +159,13 @@ export default function UsersPage() {
                 ),
             },
         ];
-    }, [data, currentUser.id, updatingId, changeUser, handleDelete, location]);
+    }, [roles, currentUser.id, updatingId, changeUser, handleDelete, location]);
 
-    const roleTabs = useMemo(() => {
-        const countByRole = new Map();
-        for (const {role_name: role} of allUsers) {
-            countByRole.set(role, (countByRole.get(role) ?? 0) + 1);
-        }
-        return [
-            {name: '', label: 'Tous', count: allUsers.length},
-            ...(data?.roles ?? []).map((role) => ({...role, count: countByRole.get(role.name) ?? 0})),
-        ];
-    }, [allUsers, data]);
+    // Les compteurs viennent de l'API (user_count) : pas besoin de charger tous les utilisateurs
+    const roleTabs = useMemo(() => [
+        {name: '', label: 'Tous', count: roles.reduce((sum, role) => sum + role.user_count, 0)},
+        ...roles.map((role) => ({...role, count: role.user_count})),
+    ], [roles]);
 
     const filters = (
         <div className={styles.roleFilter} role="group" aria-label="Filtrer par rôle">
@@ -197,20 +187,17 @@ export default function UsersPage() {
     return (
         <>
             <PageHeader title="Utilisateurs">
-                <Link className="button" to={PATHS.ORGANIZER_NEW}>+ Ajouter un organisateur</Link>
+                <Link className="button" to={userNewPath(roleFilter)}>+ Ajouter un utilisateur</Link>
             </PageHeader>
 
             {actionError && <p className={styles.error} role="alert">{actionError}</p>}
 
             <DataList
-                controls={controls}
+                list={list}
                 itemWord="utilisateur"
                 filters={filters}
                 columns={columns}
                 getRowKey={(user) => user.id}
-                loading={loading}
-                error={error}
-                onRetry={reload}
                 emptyMessage="Aucun utilisateur trouvé."
             />
         </>

@@ -1,14 +1,26 @@
-import {updateEvent} from '@/api/events.js';
+import {addEvent, updateEvent} from '@/api/events.js';
 import {addTicketType, deleteTicketType, updateTicketType} from '@/api/ticketTypes.js';
 import {toDateInput, toTimeInput} from '@/utils/format.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
 
-export const toEventForm = (event) => ({
+// event null : formulaire de création (organizerId pré-rempli depuis les événements d'un organisateur)
+export const toEventForm = (event, organizerId = '') => (event ? {
     name: event.name,
+    category_name: event.category_name,
+    status: event.status,
     start_date: toDateInput(event.start_date),
     start_time: toTimeInput(event.start_time),
     end_date: toDateInput(event.end_date),
     end_time: toTimeInput(event.end_time),
+} : {
+    organizer_id: organizerId,
+    name: '',
+    category_name: '',
+    status: 'DRAFT',
+    start_date: '',
+    start_time: '',
+    end_date: '',
+    end_time: '',
 });
 
 let nextRowKey = 0;
@@ -51,11 +63,13 @@ function validateTicketRow(row, names) {
 }
 
 export function validateEventForm(form, rows) {
+    if (form.organizer_id === '') return 'Choisissez l\'organisateur de l\'événement.';
+    if (!form.category_name) return 'Choisissez une catégorie.';
     if (!form.name.trim()) return 'Le nom de l\'événement est obligatoire.';
     if (!form.start_date || !form.start_time || !form.end_date || !form.end_time) {
         return 'Les dates et heures de début et de fin sont obligatoires.';
     }
-    if (`${form.end_date}T${form.end_time}` < `${form.start_date}T${form.start_time}`) {
+    if (`${form.end_date}T${form.end_time}` <= `${form.start_date}T${form.start_time}`) {
         return 'La fin de l\'événement doit être après son début.';
     }
 
@@ -77,7 +91,7 @@ export class SaveStepError extends Error {
 
 async function runStep(step, action) {
     try {
-        await action();
+        return await action();
     } catch (error) {
         throw new SaveStepError(step, error);
     }
@@ -110,4 +124,23 @@ export async function saveEventChanges({event, ticketTypes, initialForm, form, r
         const payload = toTicketPayload(row);
         await runStep(`Ajout de « ${payload.name} »`, () => addTicketType(event.id, payload));
     }
+}
+
+// L'événement est créé avant ses types de tickets : si un ticket échoue, eventId permet de continuer en modification
+export async function createEventWithTickets({form, rows}) {
+    const eventId = await runStep('Événement', () => addEvent({
+        ...form,
+        name: form.name.trim(),
+        organizer_id: Number(form.organizer_id),
+    }));
+    try {
+        for (const row of rows) {
+            const payload = toTicketPayload(row);
+            await runStep(`Ajout de « ${payload.name} »`, () => addTicketType(eventId, payload));
+        }
+    } catch (error) {
+        error.eventId = eventId;
+        throw error;
+    }
+    return eventId;
 }

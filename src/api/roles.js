@@ -1,6 +1,7 @@
-import client from './client.js';
+import client, {getList} from './client.js';
 
-export const getRoles = async () => (await client.get('/roles')).data;
+// params : search, page, limit → {items, total} ; chaque rôle a son user_count
+export const getRoles = (params) => getList('/roles', params);
 
 export const addRole = async (name, label) => {
     await client.post('/roles', {name, label});

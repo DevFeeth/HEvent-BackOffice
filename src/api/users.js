@@ -1,8 +1,9 @@
-import client from './client.js';
+import client, {getList} from './client.js';
 
 export const getMe = async () => (await client.get('/users/me')).data;
 
-export const getUsers = async (params = {}) => (await client.get('/users', {params})).data;
+// params : search, page, limit, role_name, is_active → {items, total}
+export const getUsers = (params) => getList('/users', params);
 
 export const createUser = async (user) => (await client.post('/users', user)).data.id;
 

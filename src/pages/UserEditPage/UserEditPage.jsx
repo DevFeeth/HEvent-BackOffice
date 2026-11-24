@@ -21,7 +21,7 @@ const TEXT_FIELDS = ['first_name', 'last_name', 'email', 'address', 'postal_code
 
 async function fetchUserAndRoles(id) {
     const [user, roles] = await Promise.all([getUser(id), getRoles()]);
-    return {user, roles};
+    return {user, roles: roles.items};
 }
 
 const toUserForm = (user) => ({

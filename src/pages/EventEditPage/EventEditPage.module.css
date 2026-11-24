@@ -69,6 +69,13 @@
   gap: 16px;
 }
 
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
 .datesGrid {
   display: grid;
   grid-template-columns: 1fr 130px 1px 1fr 130px;
