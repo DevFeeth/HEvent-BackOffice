@@ -27,6 +27,7 @@ export default function AppRouter() {
                     <Route element={<AdminLayout/>}>
                         <Route path={PATHS.ORGANIZER_NEW} element={<OrganizerCreatePage/>}/>
                         <Route path={PATHS.EVENTS} element={<EventsPage/>}/>
+                        <Route path={PATHS.EVENT_NEW} element={<EventEditPage key="new"/>}/>
                         <Route path={PATHS.EVENT_EDIT} element={<EventEditPage/>}/>
                         <Route path={PATHS.USERS} element={<UsersPage/>}/>
                         <Route path={PATHS.USER_EDIT} element={<UserEditPage/>}/>

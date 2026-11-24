@@ -24,7 +24,7 @@ L'URL de l'API se configure via `VITE_API_URL` (voir `.env.example`).
 |---|---|
 | Connexion | Email + mot de passe, « se souvenir de moi », accès réservé au rôle `ADMIN` |
 | Utilisateurs | Liste (recherche + pagination), filtre par rôle avec compteurs, changement de rôle, activation / désactivation, suppression, modification complète, ajout d'un organisateur |
-| Événements | Liste (recherche + pagination), filtre par organisateur, modification d'un événement et de ses types de tickets |
+| Événements | Liste (recherche + pagination), filtre par organisateur, ajout (avec choix de l'organisateur), modification (catégorie, statut, dates, types de tickets), suppression |
 | Catégories | Liste (recherche + pagination) avec le nombre d'événements, ajout, modification du libellé, suppression |
 | Rôles | Liste (recherche + pagination) avec le nombre d'utilisateurs, ajout, modification du libellé, suppression |
 

@@ -1,22 +1,38 @@
 import {useState} from 'react';
-import {Link, useLocation, useNavigate} from 'react-router-dom';
-import {organizerEventsPath} from '@/routes/paths.js';
+import {Link, useLocation, useNavigate, useSearchParams} from 'react-router-dom';
+import {eventEditPath, organizerEventsPath, PATHS} from '@/routes/paths.js';
 import {getApiErrorMessage} from '@/utils/apiError.js';
+import {EVENT_STATUS_LABELS} from '@/utils/eventStatus.js';
+import {fullName} from '@/utils/users.js';
 import useConfirm from '@/hooks/useConfirm.js';
+import useAdminLayout from '@/hooks/useAdminLayout.js';
 import {CheckIcon} from '@/components/icons.jsx';
 import PageHeader from '@/components/PageHeader/PageHeader.jsx';
 import FormField from '@/components/FormField/FormField.jsx';
 import TicketTypesEditor from './TicketTypesEditor.jsx';
-import {getCapacity, saveEventChanges, SaveStepError, toEventForm, toTicketRow, validateEventForm} from './eventForm.js';
+import {
+    createEventWithTickets,
+    getCapacity,
+    saveEventChanges,
+    SaveStepError,
+    toEventForm,
+    toTicketRow,
+    validateEventForm,
+} from './eventForm.js';
 import styles from './EventEditPage.module.css';
 
-export default function EventEditForm({event, ticketTypes, saveError, onSaveError}) {
+// event null : création d'un événement
+export default function EventEditForm({event, ticketTypes, categories, organizers, saveError, onSaveError}) {
+    const isNew = !event;
     const navigate = useNavigate();
     const confirm = useConfirm();
+    const {refreshCounts} = useAdminLayout();
+    const [searchParams] = useSearchParams();
     // Retour à la liste d'où l'on vient ; sans historique, aux événements de l'organisateur
-    const backPath = useLocation().state?.back ?? organizerEventsPath(event.organizer_id);
+    const location = useLocation();
+    const backPath = location.state?.back ?? (isNew ? PATHS.EVENTS : organizerEventsPath(event.organizer_id));
 
-    const [initialForm] = useState(() => toEventForm(event));
+    const [initialForm] = useState(() => toEventForm(event, searchParams.get('organizer') ?? ''));
     const [form, setForm] = useState(initialForm);
     const [rows, setRows] = useState(() => ticketTypes.map(toTicketRow));
     const [validationError, setValidationError] = useState('');
@@ -52,22 +68,32 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
 
         setSaving(true);
         try {
-            await saveEventChanges({event, ticketTypes, initialForm, form, rows});
+            if (isNew) {
+                await createEventWithTickets({form, rows});
+                refreshCounts();
+            } else {
+                await saveEventChanges({event, ticketTypes, initialForm, form, rows});
+            }
             navigate(backPath);
         } catch (err) {
             setSaving(false);
-            onSaveError(err instanceof SaveStepError ? err.message : getApiErrorMessage(err));
+            const errorMessage = err instanceof SaveStepError ? err.message : getApiErrorMessage(err);
+            if (err.eventId) {
+                // L'événement existe déjà : on continue en modification pour ne pas le créer deux fois
+                refreshCounts();
+                navigate(eventEditPath(err.eventId), {replace: true, state: {back: backPath, saveError: errorMessage}});
+                return;
+            }
+            onSaveError(errorMessage);
         }
     }
 
     const errorMessage = validationError || saveError;
+    const title = isNew ? 'Ajouter un événement' : 'Modifier l\'événement';
 
     return (
         <form onSubmit={handleSubmit} noValidate>
-            <PageHeader
-                title="Modifier l'événement"
-                back={{to: backPath, label: 'Retour aux événements'}}
-            />
+            <PageHeader title={title} back={{to: backPath, label: 'Retour aux événements'}}/>
 
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Informations générales</h2>
@@ -80,6 +106,33 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
                             <input value={getCapacity(rows)} readOnly tabIndex={-1}/>
                             <span>places</span>
                         </div>
+                    </FormField>
+                </div>
+                <div className={styles.detailsGrid}>
+                    {isNew && (
+                        <FormField label="Organisateur">
+                            <select value={form.organizer_id} onChange={updateField('organizer_id')} required>
+                                <option value="">Choisir un organisateur</option>
+                                {organizers.map((organizer) => (
+                                    <option key={organizer.id} value={organizer.id}>{fullName(organizer)}</option>
+                                ))}
+                            </select>
+                        </FormField>
+                    )}
+                    <FormField label="Catégorie">
+                        <select value={form.category_name} onChange={updateField('category_name')} required>
+                            <option value="">Choisir une catégorie</option>
+                            {categories.map((category) => (
+                                <option key={category.name} value={category.name}>{category.label}</option>
+                            ))}
+                        </select>
+                    </FormField>
+                    <FormField label="Statut">
+                        <select value={form.status} onChange={updateField('status')}>
+                            {Object.entries(EVENT_STATUS_LABELS).map(([status, label]) => (
+                                <option key={status} value={status}>{label}</option>
+                            ))}
+                        </select>
                     </FormField>
                 </div>
             </section>
@@ -116,10 +169,9 @@ export default function EventEditForm({event, ticketTypes, saveError, onSaveErro
             <div className={styles.actions}>
                 <Link className="button button--secondary" to={backPath}>Annuler</Link>
                 <button type="submit" className={styles.submit} disabled={saving}>
-                    <CheckIcon/> {saving ? 'Enregistrement…' : 'Enregistrer les modifications'}
+                    <CheckIcon/> {saving ? 'Enregistrement…' : (isNew ? 'Créer l\'événement' : 'Enregistrer les modifications')}
                 </button>
             </div>
         </form>
     );
 }
-
