@@ -1,0 +1,15 @@
+HEvent BackOffice - Compte de test
+==================================
+
+Le back-office est réservé aux administrateurs (rôle ADMIN).
+
+Type d'utilisateur   Login (e-mail)    Mot de passe
+------------------   --------------    ------------
+Administrateur       admin@mail.com    password
+
+Les autres comptes (user@mail.com, orga@mail.com, mot de passe : password) existent
+mais sont refusés à la connexion : « Accès réservé aux administrateurs ».
+
+L'API HEvent doit être lancée (docker compose up dans HEvent-api) avec le fichier .env
+fourni avec la remise : les mots de passe sont hachés avec son PEPPER.
+Après 5 échecs en 15 minutes pour un même e-mail, la connexion est bloquée 15 minutes.

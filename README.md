@@ -14,7 +14,7 @@ Il communique avec l'API REST `HEvent-api`.
    npm install
    npm run dev
    ```
-3. Ouvrir http://localhost:5173/ et se connecter avec un compte `ADMIN`.
+3. Ouvrir http://localhost:5173/ et se connecter avec un compte `ADMIN` : `admin@mail.com` / `password` (voir [login.txt](login.txt)).
 
 L'URL de l'API se configure via `VITE_API_URL` (voir `.env.example`).
 
